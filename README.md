@@ -1,75 +1,37 @@
-# Nuxt Minimal Starter
+# Equine : Local Workspace-based Task Management App Without The Nonsense. 
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Why Equine?
 
-## Setup
+- FREE.
 
-Make sure to install dependencies:
+- Dark mode that works (most of the time).
 
-```bash
-# npm
-npm install
+- Your data is YOUR data, no backend, no login. Download your workspaces and keep it with you at all times.
 
-# pnpm
-pnpm install
+- Mergeable workspaces.
 
-# yarn
-yarn install
+- Yes, there are horses. No, I won't explain why.
 
-# bun
-bun install
+# Usage 
+Make sure to have a `Node` version greater than 20 or equal and `git` installed on your system.
+
+Clone this repository
+
 ```
+git clone https://github.com/mayamayomaya/equine.git
+```
+Then
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
+```
+npm install 
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+# Features 
 
-Build the application for production:
+- Workspaces with drag-and-drop task management.
+- Week timeline view with daily columns.
+- Move tasks between workspaces and dates.
+- Full offline support with local storage.
+- Export everything as JSON.
 
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
