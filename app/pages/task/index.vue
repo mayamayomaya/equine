@@ -6,16 +6,32 @@
           :task-count="currentTasks.length"
           :has-workspace="!!currentWorkspace"
         />
-
-        <SearchCard v-if="currentWorkspace" />
-
+        <v-card v-if="currentWorkspace" class="mb-4" variant="flat">
+          <v-card-text class="pa-3">
+            <v-row align="center" dense>
+              <v-col cols="12" md="4">
+                <v-btn
+                  color="primary"
+                  height="48"
+                  block
+                  variant="flat"
+                  prepend-icon="mdi-plus"
+                  @click="openAddTaskDialog"
+                >
+                  Add New Task
+                </v-btn>
+              </v-col>
+              <v-col cols="12" md="8" class="pr-md-2">
+                <SearchCard />
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
         <OverdueAlert
           v-if="overdueCount > 0 && currentWorkspace"
           :count="overdueCount"
           @reschedule="handleReschedule"
         />
-        <AddTaskForm v-if="currentWorkspace" @task-added="handleTaskAdded" />
-
         <TaskList
           v-if="currentWorkspace"
           :tasks="currentTasks"
@@ -45,6 +61,7 @@
       :task-name="movingTask?.text"
       @confirm="handleMoveTask"
     />
+    <AddTaskForm v-model="addTaskDialog" @task-added="handleTaskAdded" />
   </v-container>
 </template>
 
@@ -153,5 +170,11 @@ const openNoteImageDialog = (data) => {
   editingNoteIndex.value = data.index;
   editingImageType.value = "note";
   imageDialog.value = true;
+};
+
+const addTaskDialog = ref(false);
+
+const openAddTaskDialog = () => {
+  addTaskDialog.value = true;
 };
 </script>

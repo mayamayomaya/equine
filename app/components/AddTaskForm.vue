@@ -1,113 +1,127 @@
 <template>
-  <v-card class="mb-4">
-    <v-card-text>
-      <v-row align="center" no-gutters>
-        <v-col>
-          <v-text-field
-            v-model="newTaskText"
-            label="Add a task..."
-            variant="outlined"
-            density="comfortable"
-            @keyup.enter="addTask"
-            hide-details
-          />
-        </v-col>
-        <v-col cols="auto" class="ms-2">
-          <v-checkbox
-            v-model="hasDeadline"
-            label="Has deadline"
-            density="compact"
-            hide-details
-          />
-        </v-col>
-        <v-col cols="auto" class="ms-2">
-          <v-btn
-            icon="mdi-plus"
-            variant="tonal"
-            @click="addTask"
-            :disabled="!newTaskText.trim()"
-          />
-        </v-col>
-      </v-row>
+  <v-dialog
+    :model-value="modelValue"
+    @update:model-value="$emit('update:modelValue', $event)"
+    max-width="500"
+    persistent
+  >
+    <v-card>
+      <v-toolbar color="primary" dark flat>
+        <v-toolbar-title>New Task</v-toolbar-title>
+        <v-spacer />
+        <v-btn icon="mdi-close" @click="closeDialog" />
+      </v-toolbar>
 
-      <v-expand-transition>
-        <div v-if="hasDeadline" class="mt-4">
-          <v-row no-gutters align="center">
+      <v-card-text class="pa-6">
+        <v-text-field
+          v-model="newTaskText"
+          label="What needs to be done?"
+          variant="solo-filled"
+          flat
+          autofocus
+          hide-details
+          class="mb-4"
+        />
+
+        <v-sheet
+          :color="
+            $vuetify.theme.current.dark ? 'grey-darken-3' : 'grey-lighten-4'
+          "
+          rounded
+          class="pa-3 mb-4"
+        >
+          <v-row align="center" no-gutters>
             <v-col>
-              <v-text-field
-                v-model="dueDate"
-                label="Due date"
-                type="date"
-                variant="outlined"
-                density="compact"
+              <v-checkbox
+                v-model="hasDeadline"
+                label="Add deadline"
                 hide-details
+                density="compact"
               />
             </v-col>
-            <v-col cols="auto" class="ms-2">
-              <v-btn variant="tonal" color="primary" @click="setDueToday">
-                Today
-              </v-btn>
-            </v-col>
-            <v-col cols="auto" class="ms-2">
-              <v-btn variant="tonal" @click="setDueTomorrow"> Tomorrow </v-btn>
+            <v-col cols="auto" v-if="hasDeadline">
+              <v-btn-group variant="tonal" density="compact">
+                <v-btn @click="setDueToday">Today</v-btn>
+                <v-btn @click="setDueTomorrow">Tomorrow</v-btn>
+              </v-btn-group>
             </v-col>
           </v-row>
-        </div>
-      </v-expand-transition>
 
-      <div class="mt-3">
-        <v-row no-gutters align="center">
-          <v-col>
+          <v-expand-transition>
             <v-text-field
-              v-model="taskImageUrl"
-              label="Image URL (optional)"
+              v-if="hasDeadline"
+              v-model="dueDate"
+              type="date"
               variant="outlined"
               density="compact"
               hide-details
-              clearable
-            >
-              <template v-slot:append-inner>
-                <v-icon
-                  v-if="taskImageUrl && isValidImageUrl(taskImageUrl)"
-                  color="success"
-                >
-                  mdi-check
-                </v-icon>
-              </template>
-            </v-text-field>
-          </v-col>
-          <v-col cols="auto">
-            <TaskNotesModal v-model="taskNotes" />
-          </v-col>
-        </v-row>
+              class="mt-3"
+            />
+          </v-expand-transition>
+        </v-sheet>
 
-        <v-expand-transition>
-          <div
-            v-if="taskImageUrl && isValidImageUrl(taskImageUrl)"
-            class="mt-2"
+        <div>
+          <div class="text-caption text-medium-emphasis mb-2">OPTIONAL</div>
+
+          <v-text-field
+            v-model="taskImageUrl"
+            label="Image URL"
+            variant="outlined"
+            density="compact"
+            hide-details
+            clearable
+            class="mb-3"
           >
-            <v-img
-              :src="taskImageUrl"
-              max-height="200"
-              class="rounded"
-              cover
-              @error="imageLoadError = true"
-            >
-              <template v-slot:error>
-                <div class="text-center pa-4 text-error">
-                  Failed to load image
-                </div>
-              </template>
-            </v-img>
-          </div>
-        </v-expand-transition>
-      </div>
-    </v-card-text>
-  </v-card>
-</template>
+            <template v-slot:append-inner>
+              <v-icon
+                v-if="taskImageUrl && isValidImageUrl(taskImageUrl)"
+                color="success"
+                size="small"
+              >
+                mdi-check
+              </v-icon>
+            </template>
+          </v-text-field>
 
+          <TaskNotesModal v-model="taskNotes" />
+
+          <v-expand-transition>
+            <v-img
+              v-if="taskImageUrl && isValidImageUrl(taskImageUrl)"
+              :src="taskImageUrl"
+              max-height="150"
+              class="rounded mt-3"
+              cover
+            />
+          </v-expand-transition>
+        </div>
+      </v-card-text>
+
+      <v-card-actions class="px-6 pb-4">
+        <v-spacer />
+        <v-btn variant="text" @click="closeDialog">Cancel</v-btn>
+        <v-btn
+          color="primary"
+          variant="flat"
+          size="large"
+          @click="addTask"
+          :disabled="!newTaskText.trim()"
+        >
+          Create Task
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
 <script setup>
-const emit = defineEmits(["task-added"]);
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(["task-added", "update:modelValue"]);
 
 const newTaskText = ref("");
 const hasDeadline = ref(false);
@@ -121,6 +135,20 @@ watch(hasDeadline, (newVal) => {
     setDueToday();
   }
 });
+
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal) {
+      newTaskText.value = "";
+      hasDeadline.value = false;
+      dueDate.value = "";
+      taskImageUrl.value = "";
+      taskNotes.value = [];
+      imageLoadError.value = false;
+    }
+  }
+);
 
 const isValidImageUrl = (url) => {
   if (!url) return false;
@@ -162,12 +190,10 @@ const addTask = () => {
   };
 
   emit("task-added", task);
+  closeDialog();
+};
 
-  newTaskText.value = "";
-  hasDeadline.value = false;
-  dueDate.value = "";
-  taskImageUrl.value = "";
-  taskNotes.value = [];
-  imageLoadError.value = false;
+const closeDialog = () => {
+  emit("update:modelValue", false);
 };
 </script>

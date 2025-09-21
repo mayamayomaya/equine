@@ -1,8 +1,11 @@
 <template>
   <v-dialog v-model="dialog" max-width="600">
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" variant="tonal" size="small" class="ms-2">
-        Add Notes
+      <v-btn v-bind="props" variant="outlined" block class="mb-3">
+        <v-icon start>mdi-note-text</v-icon>
+        {{
+          modelValue.length > 0 ? `Notes (${modelValue.length})` : "Add Notes"
+        }}
       </v-btn>
     </template>
 
